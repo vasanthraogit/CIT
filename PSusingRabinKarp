@@ -1,0 +1,85 @@
+import time
+
+# -------------------------------------------------
+# Rabin-Karp Algorithm
+# -------------------------------------------------
+
+def rabin_karp(text, pattern, d=256, q=101):
+
+    n = len(text)
+    m = len(pattern)
+
+    # Edge Case
+    if m > n:
+        return []
+
+    h = pow(d, m - 1) % q
+
+    p = 0   # Hash value for pattern
+    t = 0   # Hash value for text window
+
+    result = []
+
+    # -----------------------------------------
+    # Calculate Initial Hash Values
+    # -----------------------------------------
+    for i in range(m):
+        p = (d * p + ord(pattern[i])) % q
+        t = (d * t + ord(text[i])) % q
+
+    # -----------------------------------------
+    # Sliding Window
+    # -----------------------------------------
+    for s in range(n - m + 1):
+
+        # Check Hash Values
+        if p == t:
+
+            # Verify Characters
+            if text[s:s + m] == pattern:
+                result.append(s)
+
+        # Calculate Next Window Hash
+        if s < n - m:
+
+            t = (
+                d * (t - ord(text[s]) * h)
+                + ord(text[s + m])
+            ) % q
+
+            # Convert Negative Hash to Positive
+            if t < 0:
+                t += q
+
+    return result
+
+
+# -------------------------------------------------
+# MAIN PROGRAM
+# -------------------------------------------------
+
+text = input("Enter the Text:\n")
+pattern = input("Enter the Pattern to Search:\n")
+
+start_time = time.time()
+
+positions = rabin_karp(text, pattern)
+
+end_time = time.time()
+
+# -------------------------------------------------
+# OUTPUT
+# -------------------------------------------------
+
+if positions:
+    print("\nPattern Found at Positions:")
+    for pos in positions:
+        print(pos)
+else:
+    print("\nPattern Not Found")
+
+print("\nTotal Matches:", len(positions))
+
+execution_time = (end_time - start_time) * 1000
+
+print(f"\nExecution Time: {execution_time:.4f} ms")
