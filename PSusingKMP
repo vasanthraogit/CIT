@@ -1,0 +1,110 @@
+import time
+
+# -------------------------------------------------
+# KMP SEARCH FUNCTION
+# -------------------------------------------------
+
+def KMPSearch(pat, txt):
+
+    m = len(pat)
+    n = len(txt)
+
+    # Create LPS Array
+    lps = [0] * m
+
+    # Variable for pattern index
+    j = 0
+
+    # Compute LPS Array
+    computeLPSArray(pat, m, lps)
+
+    print("\nLPS Array:")
+    print(lps)
+
+    i = 0
+
+    found = False
+
+    while i < n:
+
+        # Matching Characters
+        if pat[j] == txt[i]:
+            i += 1
+            j += 1
+
+        # Pattern Found
+        if j == m:
+
+            print("Pattern found at index:", i - j)
+
+            found = True
+
+            j = lps[j - 1]
+
+        # Mismatch after j matches
+        elif i < n and pat[j] != txt[i]:
+
+            if j != 0:
+                j = lps[j - 1]
+            else:
+                i += 1
+
+    if not found:
+        print("Pattern not found")
+
+
+# -------------------------------------------------
+# COMPUTE LPS ARRAY
+# -------------------------------------------------
+
+def computeLPSArray(pat, m, lps):
+
+    length = 0
+
+    lps[0] = 0
+
+    i = 1
+
+    while i < m:
+
+        if pat[i] == pat[length]:
+
+            length += 1
+
+            lps[i] = length
+
+            i += 1
+
+        else:
+
+            if length != 0:
+                length = lps[length - 1]
+
+            else:
+                lps[i] = 0
+                i += 1
+
+
+# -------------------------------------------------
+# MAIN PROGRAM
+# -------------------------------------------------
+
+txt = input("Enter Text: ")
+pat = input("Enter Pattern: ")
+
+start_time = time.time()
+
+KMPSearch(pat, txt)
+
+end_time = time.time()
+
+# -------------------------------------------------
+# OUTPUT DETAILS
+# -------------------------------------------------
+
+print("\nText Length:", len(txt))
+print("Pattern Length:", len(pat))
+
+execution_time = (end_time - start_time) * 1000
+
+print(f"\nExecution Time: {execution_time:.4f} ms")
